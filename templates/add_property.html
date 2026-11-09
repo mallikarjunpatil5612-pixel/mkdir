@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit Rental Property' if property else 'Add New Rental Property' }} — HomeRental PRO{% endblock %}
+
+{% block extra_head %}
+<style>
+    .admin-form-shell {
+        background: #ffffff;
+        border-radius: 18px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+        padding: 2.4rem;
+        margin-bottom: 3.5rem;
+    }
+    .form-section-title {
+        font-size: 1.12rem;
+        font-weight: 800;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        margin: 1.8rem 0 1.2rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .form-section-title:first-of-type {
+        margin-top: 0;
+    }
+    .step-pill {
+        background: #eff6ff;
+        color: #1e40af;
+        font-size: 0.76rem;
+        font-weight: 800;
+        padding: 0.2rem 0.55rem;
+        border-radius: 6px;
+        letter-spacing: 0.5px;
+    }
+    .form-control:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px; margin-top: 1.5rem; margin-bottom: 4rem;">
+    
+    <!-- Top Action Header -->
+    <div style="margin-bottom: 1.6rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <a href="{{ url_for('admin_dashboard') }}" style="color: #2563eb; text-decoration: none; font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;">
+                &larr; Back to Admin Console
+            </a>
+            <h1 style="font-size: 2.1rem; font-weight: 800; color: #0f172a; margin-top: 0.4rem; letter-spacing: -0.4px;">
+                {{ 'Edit Rental Property' if property else 'Add New Rental Property' }}
+            </h1>
+            <p style="color: #64748b; font-size: 0.9rem; margin-top: 0.2rem;">
+                Provide comprehensive property information, high-resolution photographs, and rental terms.
+            </p>
+        </div>
+        <span class="brand-badge" style="background: #fee2e2; color: #b91c1c; font-weight: 800; font-size: 0.78rem;">
+            🛡️ ADMIN PRIVILEGED
+        </span>
+    </div>
+
+    <!-- Main Property Form -->
+    <div class="admin-form-shell">
+        <form method="POST" enctype="multipart/form-data">
+            
+            <div class="form-section-title">
+                <span class="step-pill">01</span> General Property Overview
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.2rem;">
+                <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Property Title *</label>
+                <input type="text" name="title" class="form-control" value="{{ property.title if property else '' }}" placeholder="e.g. Luxury 3BHK Apartment with Balcony & City View" required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1.2rem;">
+                <div class="form-group">
+                    <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Property Type *</label>
+                    <select name="property_type" class="form-control" required>
+                        <option value="Apartment" {% if property and property.property_type == 'Apartment' %}selected{% endif %}>Apartment</option>
+                        <option value="Villa" {% if property and property.property_type == 'Villa' %}selected{% endif %}>Villa</option>
+                        <option value="Independent House" {% if property and property.property_type == 'Independent House' %}selected{% endif %}>Independent House</option>
+                        <option value="Studio" {% if property and property.property_type == 'Studio' %}selected{% endif %}>Studio</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Furnishing Status *</label>
+                    <select name="furnishing_status" class="form-control" required>
+                        <option value="Furnished" {% if property and property.furnishing_status == 'Furnished' %}selected{% endif %}>Furnished</option>
+                        <option value="Semi-Furnished" {% if property and property.furnishing_status == 'Semi-Furnished' %}selected{% endif %}>Semi-Furnished</option>
+                        <option value="Unfurnished" {% if property and property.furnishing_status == 'Unfurnished' %}selected{% endif %}>Unfurnished</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section-title">
+                <span class="step-pill">02</span> Location & Address Details
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.2rem;">
+                <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Full Address *</label>
+                <input type="text" name="address" class="form-control" value="{{ property.address if property else '' }}" placeholder="Door No, Building Name, Street..." required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.2rem;">
+                <div class="form-group">
+                    <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Locality / Sector *</label>
+                    <input type="text" name="locality" class="form-control" value="{{ property.locality if property else '' }}" placeholder="e.g. Bellandur" required>
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">City *</label>
+                    <input type="text" name="city" class="form-control" value="{{ property.city if property else '' }}" placeholder="e.g. Bengaluru" required>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.2rem;">
+                <div class="form-group">
+                    <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Latitude (Map Coordinate)</label>
+                    <input type="number" step="any" name="latitude" class="form-control" value="{{ property.latitude if property else '12.9716' }}">
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Longitude (Map Coordinate)</label>
+                    <input type="number" step="any" name="longitude" class="form-control" value="{{ property.longitude if property else '77.5946' }}">
+                </div>
+            </div>
+
+            <div class="form-section-title">
+                <span class="step-pill">03</span> Financials & Room Layout
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.2rem;">
+                <div class="form-group">
+                    <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Monthly Rent (₹) *</label>
+                    <input type="number" name="monthly_rent" class="form-control" value="{{ property.monthly_rent if property else '' }}" placeholder="e.g. 35000" required>
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Security Deposit (₹)</label>
+                    <input type="number" name="security_deposit" class="form-control" value="{{ property.security_deposit if property else '' }}" placeholder="e.g. 100000">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; margin-bottom: 1.2rem;">
+                <div class="form-group">
+                    <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Bedrooms *</label>
+                    <input type="number" name="bedrooms" class="form-control" value="{{ property.bedrooms if property else '2' }}" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Bathrooms *</label>
+                    <input type="number" name="bathrooms" class="form-control" value="{{ property.bathrooms if property else '2' }}" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Balconies</label>
+                    <input type="number" name="balconies" class="form-control" value="{{ property.balconies if property else '1' }}" min="0">
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Area (Sq Ft) *</label>
+                    <input type="number" name="area_sqft" class="form-control" value="{{ property.area_sqft if property else '' }}" placeholder="e.g. 1250" required>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.2rem;">
+                <div class="form-group">
+                    <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Water Availability</label>
+                    <input type="text" name="water_available" class="form-control" value="{{ property.water_available if property else '24/7 Supply' }}">
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Admin Contact Phone *</label>
+                    <input type="text" name="contact_phone" class="form-control" value="{{ property.contact_phone if property else '+91 9876543210' }}" required>
+                </div>
+            </div>
+
+            <div class="form-section-title">
+                <span class="step-pill">04</span> Features, Description & Photographs
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.2rem;">
+                <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Amenities (Comma-separated)</label>
+                <input type="text" name="amenities" class="form-control" value="{{ property.amenities|join(', ') if property and property.amenities else 'Gym, Swimming Pool, 24/7 Security, Power Backup, Lift, Covered Parking' }}" placeholder="Gym, Lift, Power Backup...">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.2rem;">
+                <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Property Description</label>
+                <textarea name="description" class="form-control" rows="4" placeholder="Highlight key benefits, ventilation, nearby metro, schools, etc.">{{ property.description if property else '' }}</textarea>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label style="font-weight: 700; color: #334155; font-size: 0.88rem;">Upload Photographs (Multiple allowed: JPG, PNG, WEBP)</label>
+                <input type="file" name="images" class="form-control" multiple accept="image/*">
+                <small style="color: #64748b; margin-top: 0.35rem; display: block;">Images are securely uploaded directly to Supabase Storage (bucket: property-images).</small>
+            </div>
+
+            {% if images %}
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="font-size: 0.85rem; font-weight: 700; color: #334155;">Existing Photographs:</label>
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.5rem;">
+                        {% for img in images %}
+                            <img src="{{ img.image_url }}" alt="Property Image" style="width: 100px; height: 75px; object-fit: cover; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.06);">
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="form-section-title">
+                <span class="step-pill">05</span> Status & Visibility Flags
+            </div>
+
+            <div style="display: flex; gap: 2rem; margin-bottom: 2.2rem; flex-wrap: wrap; background: #f8fafc; padding: 1rem 1.4rem; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <label style="display: flex; align-items: center; gap: 0.55rem; cursor: pointer; font-weight: 700; color: #1e293b; font-size: 0.92rem;">
+                    <input type="checkbox" name="parking_available" style="width: 18px; height: 18px;" {% if not property or property.parking_available %}checked{% endif %}>
+                    Parking Available
+                </label>
+
+                <label style="display: flex; align-items: center; gap: 0.55rem; cursor: pointer; font-weight: 700; color: #1e293b; font-size: 0.92rem;">
+                    <input type="checkbox" name="is_available" style="width: 18px; height: 18px;" {% if not property or property.is_available %}checked{% endif %}>
+                    Available for Rent
+                </label>
+
+                <label style="display: flex; align-items: center; gap: 0.55rem; cursor: pointer; font-weight: 700; color: #1e293b; font-size: 0.92rem;">
+                    <input type="checkbox" name="is_published" style="width: 18px; height: 18px;" {% if not property or property.is_published %}checked{% endif %}>
+                    Published (Visible in Catalog)
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.05rem; padding: 0.9rem; font-weight: 700; border-radius: 12px; box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);">
+                {{ 'Update Listing Details' if property else 'Publish New Rental Listing' }}
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

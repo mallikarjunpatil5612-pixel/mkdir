@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+    .dashboard-hero {
+        background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 60%, #0284c7 100%);
+        border-radius: 16px;
+        padding: 2.2rem 2.5rem;
+        color: #ffffff;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 25px -5px rgba(30, 64, 175, 0.25);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
+    .profile-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(8px);
+        padding: 0.35rem 0.85rem;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+    .kpi-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2.5rem;
+    }
+    .kpi-card {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 1.4rem 1.6rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .kpi-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.08);
+    }
+    .kpi-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+    }
+    .card-shell {
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        padding: 1.8rem;
+        margin-bottom: 2.5rem;
+    }
+    .pill-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+    }
+    .pill-new { background: #dbeafe; color: #1e40af; }
+    .pill-contacted { background: #fef3c7; color: #92400e; }
+    .pill-resolved { background: #dcfce7; color: #15803d; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1240px; margin-top: 1rem; margin-bottom: 4rem;">
+    
+    <!-- 1. Modern Welcome Hero Banner -->
+    <div class="dashboard-hero">
+        <div>
+            <span class="profile-pill">👤 VERIFIED TENANT ACCOUNT</span>
+            <h1 style="font-size: 2.1rem; font-weight: 800; margin-top: 0.6rem; letter-spacing: -0.5px;">
+                Welcome back, {{ current_user.name }}!
+            </h1>
+            <p style="color: #bfdbfe; font-size: 0.98rem; margin-top: 0.3rem;">
+                Explore verified homes, manage your personal enquiries, and update your profile details.
+            </p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="{{ url_for('properties') }}" class="btn" style="background: #ffffff; color: #1e40af; font-weight: 700; padding: 0.75rem 1.4rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                🔍 Search All Homes
+            </a>
+        </div>
+    </div>
+
+    <!-- 2. KPI Summary Cards -->
+    <div class="kpi-row">
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background: #eff6ff; color: #2563eb;">🏠</div>
+            <div>
+                <div style="font-size: 1.7rem; font-weight: 800; color: #0f172a;">{{ available_properties|length }}</div>
+                <div style="font-size: 0.85rem; color: #64748b; font-weight: 500;">Available Houses</div>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background: #ecfdf5; color: #059669;">📩</div>
+            <div>
+                <div style="font-size: 1.7rem; font-weight: 800; color: #0f172a;">{{ enquiries|length }}</div>
+                <div style="font-size: 0.85rem; color: #64748b; font-weight: 500;">Submitted Enquiries</div>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background: #fff1f2; color: #e11d48;">❤️</div>
+            <div>
+                <div style="font-size: 1.7rem; font-weight: 800; color: #0f172a;">{{ favourites|length }}</div>
+                <div style="font-size: 0.85rem; color: #64748b; font-weight: 500;">Saved Favourites</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Profile Information Card -->
+    <div class="card-shell">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <div>
+                <h3 style="font-size: 1.2rem; font-weight: 700; color: #0f172a;">Profile Details</h3>
+                <p style="font-size: 0.85rem; color: #64748b;">Manage your contact information used when submitting rental enquiries</p>
+            </div>
+        </div>
+        <form action="{{ url_for('update_profile') }}" method="POST" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) 140px; gap: 1rem; align-items: flex-end;">
+            <div class="form-group">
+                <label style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Full Name</label>
+                <input type="text" name="name" class="form-control" value="{{ current_user.name }}" required>
+            </div>
+            <div class="form-group">
+                <label style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Email Address (Primary)</label>
+                <input type="email" class="form-control" value="{{ current_user.email }}" readonly style="background-color: #f8fafc; cursor: not-allowed; color: #64748b;">
+            </div>
+            <div class="form-group">
+                <label style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Contact Phone</label>
+                <input type="tel" name="phone" class="form-control" value="{{ current_user.phone or '' }}" placeholder="+91 ...">
+            </div>
+            <div>
+                <button type="submit" class="btn btn-outline" style="height: 42px; width: 100%; font-weight: 600;">Update Profile</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 4. Available Rental Homes Showcase -->
+    <div style="margin-bottom: 3.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <div>
+                <h2 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; letter-spacing: -0.3px;">Available Rental Homes</h2>
+                <p style="color: #64748b; font-size: 0.92rem;">Verified listings published by the administrator ready for move-in.</p>
+            </div>
+            <a href="{{ url_for('properties') }}" class="btn btn-outline btn-sm">Explore All &rarr;</a>
+        </div>
+
+        {% if available_properties %}
+            <div class="property-grid">
+                {% for prop in available_properties %}
+                    <div class="property-card">
+                        <div class="property-img-wrapper">
+                            {% if prop.property_images and prop.property_images|length > 0 %}
+                                <img src="{{ prop.property_images[0].image_url }}" alt="{{ prop.title }}" onerror="this.src='https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80'">
+                            {% else %}
+                                <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80" alt="{{ prop.title }}">
+                            {% endif %}
+                            <span class="badge-tag">{{ prop.property_type }}</span>
+                            <span class="badge-status badge-available">● Available</span>
+                        </div>
+
+                        <div class="property-body">
+                            <div class="property-price">
+                                ₹{{ "{:,.0f}".format(prop.monthly_rent) }} <span>/ month</span>
+                            </div>
+                            <h3 class="property-title">{{ prop.title }}</h3>
+                            <div class="property-location">📍 {{ prop.locality }}, {{ prop.city }}</div>
+
+                            <div class="property-specs">
+                                <div class="spec-item">
+                                    <strong>{{ prop.bedrooms }} BHK</strong>
+                                    <span>Bedrooms</span>
+                                </div>
+                                <div class="spec-item">
+                                    <strong>{{ prop.bathrooms }}</strong>
+                                    <span>Baths</span>
+                                </div>
+                                <div class="spec-item">
+                                    <strong>{{ prop.area_sqft }}</strong>
+                                    <span>Sq Ft</span>
+                                </div>
+                            </div>
+
+                            <div class="property-footer">
+                                <a href="{{ url_for('property_details', property_id=prop.id) }}" class="btn btn-primary" style="width: 100%;">View Details & Enquire</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="background: #ffffff; padding: 3rem; border-radius: 14px; border: 1px solid #e2e8f0; text-align: center;">
+                <p style="color: #64748b; font-size: 1rem;">No properties listed currently.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- 5. My Enquiries Section -->
+    <div style="margin-bottom: 3.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <div>
+                <h2 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; letter-spacing: -0.3px;">My Rental Enquiries ({{ enquiries|length }})</h2>
+                <p style="color: #64748b; font-size: 0.92rem;">Direct correspondence and viewing status for houses you enquired about</p>
+            </div>
+        </div>
+        {% if enquiries %}
+            <div class="table-card" style="border-radius: 14px; overflow: hidden;">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>My Message</th>
+                            <th>Status</th>
+                            <th>Submitted Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enq in enquiries %}
+                            <tr>
+                                <td>
+                                    <strong>{{ enq.properties.title if enq.properties else 'Property' }}</strong><br>
+                                    <small style="color: #64748b;">📍 {{ enq.properties.locality if enq.properties else '' }}, {{ enq.properties.city if enq.properties else '' }}</small>
+                                </td>
+                                <td style="max-width: 320px; line-height: 1.45;">{{ enq.message }}</td>
+                                <td>
+                                    {% if enq.status == 'New' %}
+                                        <span class="pill-badge pill-new">● Submitted / In Review</span>
+                                    {% elif enq.status == 'Contacted' %}
+                                        <span class="pill-badge pill-contacted">● Admin Contacted</span>
+                                    {% else %}
+                                        <span class="pill-badge pill-resolved">✓ Resolved</span>
+                                    {% endif %}
+                                </td>
+                                <td style="color: #64748b; font-size: 0.88rem;">{{ enq.created_at[:10] if enq.created_at else 'Recent' }}</td>
+                                <td>
+                                    <a href="{{ url_for('property_details', property_id=enq.property_id) }}" class="btn btn-sm btn-outline">View Property</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div style="background: #ffffff; padding: 2.5rem; border-radius: 14px; border: 1px solid #e2e8f0; text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📩</div>
+                <h4 style="font-size: 1.1rem; color: #0f172a;">No Enquiries Submitted Yet</h4>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 0.25rem;">When you find a house you like, click "View Details & Enquire" to message the admin.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- 6. My Saved Favourites -->
+    <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <div>
+                <h2 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; letter-spacing: -0.3px;">Saved Favourites ({{ favourites|length }})</h2>
+                <p style="color: #64748b; font-size: 0.92rem;">Properties bookmarked for easy reference</p>
+            </div>
+        </div>
+        {% if favourites %}
+            <div class="property-grid">
+                {% for prop in favourites %}
+                    <div class="property-card">
+                        <div class="property-img-wrapper">
+                            {% if prop.property_images and prop.property_images|length > 0 %}
+                                <img src="{{ prop.property_images[0].image_url }}" alt="{{ prop.title }}" onerror="this.src='https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80'">
+                            {% else %}
+                                <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80" alt="{{ prop.title }}">
+                            {% endif %}
+                            <span class="badge-tag">{{ prop.property_type }}</span>
+                        </div>
+                        <div class="property-body">
+                            <div class="property-price">
+                                ₹{{ "{:,.0f}".format(prop.monthly_rent) }} <span>/ month</span>
+                            </div>
+                            <h3 class="property-title">{{ prop.title }}</h3>
+                            <div class="property-location">📍 {{ prop.locality }}, {{ prop.city }}</div>
+                            <div class="property-footer">
+                                <a href="{{ url_for('property_details', property_id=prop.id) }}" class="btn btn-primary" style="flex: 1;">View Details</a>
+                                <form action="{{ url_for('toggle_favourite', property_id=prop.id) }}" method="POST">
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Remove from favourites">✕</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="background: #ffffff; padding: 2.5rem; border-radius: 14px; border: 1px solid #e2e8f0; text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">❤️</div>
+                <h4 style="font-size: 1.1rem; color: #0f172a;">No Favourites Saved</h4>
+                <p style="color: #64748b; font-size: 0.9rem; margin: 0.25rem 0 1rem;">Bookmark properties you love to compare them here anytime.</p>
+                <a href="{{ url_for('properties') }}" class="btn btn-outline btn-sm">Explore Houses Now</a>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

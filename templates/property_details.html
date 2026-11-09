@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+    .gallery-main {
+        width: 100%;
+        height: 440px;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 1rem;
+        background: #000;
+    }
+    .gallery-main img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .gallery-thumbs {
+        display: flex;
+        gap: 0.75rem;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+    .gallery-thumb {
+        width: 100px;
+        height: 70px;
+        border-radius: 8px;
+        object-fit: cover;
+        cursor: pointer;
+        opacity: 0.7;
+        border: 2px solid transparent;
+        transition: all 0.2s;
+    }
+    .gallery-thumb.active, .gallery-thumb:hover {
+        opacity: 1;
+        border-color: var(--primary);
+    }
+    .details-grid {
+        display: grid;
+        grid-template-columns: 2fr 1.1fr;
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+    .spec-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: var(--bg-page);
+        border: 1px solid var(--border);
+        padding: 0.5rem 0.9rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    .amenity-chip {
+        display: inline-block;
+        background: var(--primary-light);
+        color: var(--primary);
+        padding: 0.4rem 0.85rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin: 0.25rem;
+    }
+    #property-map {
+        height: 320px;
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        margin-top: 1rem;
+    }
+    @media (max-width: 900px) {
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Gallery -->
+    <div>
+        <div class="gallery-main">
+            {% if images and images|length > 0 %}
+                <img id="main-view-image" src="{{ images[0].image_url }}" alt="{{ property.title }}">
+            {% else %}
+                <img id="main-view-image" src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&q=80" alt="{{ property.title }}">
+            {% endif %}
+        </div>
+        {% if images and images|length > 1 %}
+            <div class="gallery-thumbs">
+                {% for img in images %}
+                    <img src="{{ img.image_url }}" class="gallery-thumb {% if loop.first %}active{% endif %}" onclick="changeMainImage(this.src)">
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Main Content & Sidebar -->
+    <div class="details-grid">
+        <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <div>
+                    <span class="badge-tag" style="position: static; margin-bottom: 0.5rem;">{{ property.property_type }}</span>
+                    <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--dark); margin-top: 0.25rem;">{{ property.title }}</h1>
+                    <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 0.25rem;">
+                        📍 {{ property.address }}, {{ property.locality }}, {{ property.city }}
+                    </p>
+                </div>
+                <div>
+                    {% if property.is_available %}
+                        <span class="badge-status badge-available" style="position: static; font-size: 0.9rem;">● Available Now</span>
+                    {% else %}
+                        <span class="badge-status badge-occupied" style="position: static; font-size: 0.9rem;">● Currently Rented</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Specs Grid -->
+            <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1.5rem 0;">
+                <div class="spec-badge">🛏️ {{ property.bedrooms }} Bedrooms</div>
+                <div class="spec-badge">🚿 {{ property.bathrooms }} Bathrooms</div>
+                <div class="spec-badge">🌅 {{ property.balconies or 0 }} Balconies</div>
+                <div class="spec-badge">📐 {{ property.area_sqft }} Sq.Ft</div>
+                <div class="spec-badge">🛋️ {{ property.furnishing_status }}</div>
+                <div class="spec-badge">🚗 {{ 'Parking Available' if property.parking_available else 'No Parking' }}</div>
+                <div class="spec-badge">💧 {{ property.water_available }}</div>
+            </div>
+
+            <!-- Description -->
+            <div style="background: var(--white); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 2rem;">
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem;">About This House</h3>
+                <p style="line-height: 1.7; color: var(--text-main); white-space: pre-line;">{{ property.description }}</p>
+            </div>
+
+            <!-- Amenities -->
+            <div style="background: var(--white); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 2rem;">
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem;">Amenities & Features</h3>
+                {% if property.amenities %}
+                    <div>
+                        {% for am in property.amenities %}
+                            <span class="amenity-chip">✓ {{ am }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p style="color: var(--text-muted);">Standard residential amenities available.</p>
+                {% endif %}
+            </div>
+
+            <!-- Map Location -->
+            <div style="background: var(--white); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 2rem;">
+                <h3 style="font-size: 1.25rem; font-weight: 700;">Location on Map</h3>
+                <p style="color: var(--text-muted); font-size: 0.88rem;">Approximate verified location via OpenStreetMap</p>
+                <div id="property-map"></div>
+            </div>
+        </div>
+
+        <!-- Sidebar / Action Card -->
+        <div>
+            <div style="background: var(--white); padding: 1.75rem; border-radius: 14px; border: 1px solid var(--border); box-shadow: var(--shadow-md); position: sticky; top: 90px;">
+                <div style="margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+                    <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">MONTHLY RENT</div>
+                    <div style="font-size: 2.2rem; font-weight: 800; color: var(--primary);">
+                        ₹{{ "{:,.0f}".format(property.monthly_rent) }}
+                    </div>
+                    <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.25rem;">
+                        Security Deposit: <strong>₹{{ "{:,.0f}".format(property.security_deposit or 0) }}</strong>
+                    </div>
+                </div>
+
+                {% if is_logged_in and user_role == 'CUSTOMER' %}
+                    <!-- Favourite Button -->
+                    <button class="btn btn-fav-toggle {% if is_favourite %}btn-primary{% else %}btn-outline{% endif %}" data-id="{{ property.id }}" style="width: 100%; margin-bottom: 1.25rem;">
+                        {% if is_favourite %}❤️ Saved in Favourites{% else %}🤍 Add to Favourites{% endif %}
+                    </button>
+
+                    <!-- Enquiry Form -->
+                    <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem;">Send Rental Enquiry</h4>
+                    <form action="{{ url_for('submit_enquiry') }}" method="POST">
+                        <input type="hidden" name="property_id" value="{{ property.id }}">
+                        <div class="form-group" style="margin-bottom: 0.75rem;">
+                            <label>Your Name</label>
+                            <input type="text" name="name" class="form-control" value="{{ current_user.name if current_user else '' }}" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0.75rem;">
+                            <label>Contact Phone</label>
+                            <input type="text" name="phone" class="form-control" value="{{ current_user.phone if current_user else '' }}" placeholder="+91 ...">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label>Your Message / Query</label>
+                            <textarea name="message" class="form-control" rows="3" required placeholder="I am interested in scheduling a viewing..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Enquiry to Admin</button>
+                    </form>
+                {% elif is_logged_in and user_role == 'ADMIN' %}
+                    <div style="background: var(--primary-light); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <strong>Administrator Controls</strong>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.5rem 0 1rem;">You manage this listing.</p>
+                        <a href="{{ url_for('edit_property', property_id=property.id) }}" class="btn btn-primary btn-sm" style="width: 100%; margin-bottom: 0.5rem;">Edit This Listing</a>
+                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline btn-sm" style="width: 100%;">Go to Admin Dashboard</a>
+                    </div>
+                {% else %}
+                    <div style="text-align: center; padding: 1rem 0;">
+                        <p style="margin-bottom: 1rem; color: var(--text-muted); font-size: 0.95rem;">Please log in as a customer to save favourites or submit rental enquiries.</p>
+                        <a href="{{ url_for('login', next=request.path) }}" class="btn btn-primary" style="width: 100%; margin-bottom: 0.5rem;">Login to Enquire</a>
+                        <a href="{{ url_for('register') }}" class="btn btn-outline" style="width: 100%;">Register Account</a>
+                    </div>
+                {% endif %}
+
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem;">
+                    <span>📞 Admin Direct Contact:</span>
+                    <strong style="color: var(--dark);">{{ property.contact_phone }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function changeMainImage(src) {
+        document.getElementById('main-view-image').src = src;
+        document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
+    // Leaflet map setup
+    const lat = {{ property.latitude or 12.9716 }};
+    const lng = {{ property.longitude or 77.5946 }};
+    const map = L.map('property-map').setView([lat, lng], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.marker([lat, lng]).addTo(map)
+        .bindPopup('<b>{{ property.title }}</b><br>{{ property.locality }}, {{ property.city }}')
+        .openPopup();
+</script>
+{% endblock %}
+

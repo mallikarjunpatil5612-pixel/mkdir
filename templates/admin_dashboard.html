@@ -1,0 +1,760 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Management Console — HomeRental PRO{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Admin Command Center Styling */
+    .admin-hero {
+        background: linear-gradient(135deg, #090d16 0%, #0f172a 45%, #1e3a8a 100%);
+        border-radius: 18px;
+        padding: 2.2rem 2.6rem;
+        color: #ffffff;
+        margin-bottom: 2rem;
+        box-shadow: 0 15px 35px -10px rgba(15, 23, 42, 0.45);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .admin-hero::before {
+        content: '';
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 240px;
+        height: 240px;
+        background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    .admin-badge-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(239, 68, 68, 0.18);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        color: #fca5a5;
+        padding: 0.35rem 0.85rem;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+    }
+    .admin-system-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #e2e8f0;
+        padding: 0.3rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background: #10b981;
+        border-radius: 50%;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Executive KPI Grid */
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2.2rem;
+    }
+    .kpi-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 1.4rem 1.6rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        position: relative;
+    }
+    .kpi-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+        border-color: #cbd5e1;
+    }
+    .kpi-icon-wrap {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        flex-shrink: 0;
+    }
+    .kpi-num {
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.1;
+    }
+    .kpi-label {
+        font-size: 0.85rem;
+        color: #64748b;
+        font-weight: 600;
+        margin-top: 0.25rem;
+    }
+    .kpi-sub {
+        font-size: 0.76rem;
+        color: #94a3b8;
+        margin-top: 0.15rem;
+    }
+
+    /* Tab bar & Instant Search */
+    .admin-controls-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 1rem 1.4rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .tab-pills {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .tab-btn {
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        font-weight: 600;
+        font-size: 0.88rem;
+        padding: 0.55rem 1.1rem;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+    }
+    .tab-btn:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+    .tab-btn.active {
+        background: #1e40af;
+        color: #ffffff;
+        border-color: #1e40af;
+        box-shadow: 0 3px 8px rgba(30, 64, 175, 0.25);
+    }
+    .tab-badge {
+        background: rgba(255, 255, 255, 0.25);
+        color: inherit;
+        font-size: 0.74rem;
+        padding: 0.1rem 0.45rem;
+        border-radius: 999px;
+        font-weight: 700;
+    }
+    .tab-btn:not(.active) .tab-badge {
+        background: #cbd5e1;
+        color: #1e293b;
+    }
+
+    .search-input-box {
+        position: relative;
+        min-width: 280px;
+    }
+    .search-input-box input {
+        width: 100%;
+        padding: 0.55rem 1rem 0.55rem 2.4rem;
+        border-radius: 10px;
+        border: 1px solid #cbd5e1;
+        font-size: 0.88rem;
+        outline: none;
+        transition: all 0.2s;
+    }
+    .search-input-box input:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+    .search-input-box::before {
+        content: '🔍';
+        position: absolute;
+        left: 0.8rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.85rem;
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    /* Content Shells */
+    .admin-section {
+        background: #ffffff;
+        border-radius: 18px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        padding: 1.8rem;
+        margin-bottom: 2.2rem;
+    }
+    .section-headline {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.4rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .section-headline h2 {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    /* Enterprise Table Styling */
+    .admin-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 0.9rem;
+    }
+    .admin-table thead th {
+        background: #f8fafc;
+        color: #475569;
+        font-weight: 700;
+        font-size: 0.78rem;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        padding: 0.85rem 1rem;
+        border-bottom: 2px solid #e2e8f0;
+        text-align: left;
+    }
+    .admin-table tbody td {
+        padding: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+        color: #1e293b;
+    }
+    .admin-table tbody tr:hover td {
+        background: #f8fafc;
+    }
+    .admin-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Status Pills */
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.3rem 0.7rem;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+    }
+    .status-available { background: #dcfce7; color: #15803d; }
+    .status-occupied { background: #fef3c7; color: #92400e; }
+    .status-published { background: #dbeafe; color: #1e40af; }
+    .status-draft { background: #f1f5f9; color: #475569; }
+    .status-new { background: #fee2e2; color: #b91c1c; }
+    .status-contacted { background: #fef3c7; color: #b45309; }
+    .status-resolved { background: #dcfce7; color: #15803d; }
+
+    /* Property Thumbnail */
+    .prop-thumb {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        object-fit: cover;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+        border: 1px solid #e2e8f0;
+        flex-shrink: 0;
+    }
+    .prop-info-cell {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+    }
+
+    /* Customer Avatar Circle */
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: #ffffff;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        flex-shrink: 0;
+        box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    }
+
+    /* Action Buttons in Table */
+    .btn-action-icon {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.82rem;
+        border-radius: 8px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        text-decoration: none;
+        transition: all 0.15s;
+    }
+    .btn-action-edit {
+        background: #f1f5f9;
+        color: #334155;
+        border: 1px solid #cbd5e1;
+    }
+    .btn-action-edit:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+    .btn-action-delete {
+        background: #fef2f2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+        cursor: pointer;
+    }
+    .btn-action-delete:hover {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1280px; margin-top: 1.2rem; margin-bottom: 4rem;">
+
+    <!-- 1. Executive Admin Command Hero -->
+    <div class="admin-hero">
+        <div style="z-index: 2;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                <span class="admin-badge-pill">🛡️ Sole Administrator Console</span>
+                <span class="admin-system-chip">
+                    <span class="pulse-dot"></span> Supabase Cloud Synchronized
+                </span>
+            </div>
+            
+            <h1 style="font-size: 2.3rem; font-weight: 800; margin-top: 0.65rem; letter-spacing: -0.5px;">
+                Admin Management Console
+            </h1>
+            <p style="color: #cbd5e1; font-size: 0.98rem; margin-top: 0.35rem; max-width: 680px;">
+                Centralized hub for managing verified rental properties, reviewing tenant booking enquiries, and monitoring customer registrations.
+            </p>
+        </div>
+
+        <div style="display: flex; gap: 0.85rem; flex-wrap: wrap; z-index: 2;">
+            <a href="{{ url_for('add_property') }}" class="btn" style="background: #2563eb; color: #ffffff; font-weight: 700; padding: 0.75rem 1.4rem; border-radius: 10px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35); border: none; display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.1rem;">+</span> Add Rental Property
+            </a>
+            <a href="{{ url_for('properties') }}" target="_blank" class="btn" style="background: rgba(255, 255, 255, 0.12); color: #ffffff; font-weight: 600; padding: 0.75rem 1.2rem; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px);">
+                🌐 View Public Catalog &rarr;
+            </a>
+        </div>
+    </div>
+
+    <!-- 2. Executive KPI Overview -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background: #eff6ff; color: #1e40af;">🏠</div>
+            <div>
+                <div class="kpi-num">{{ stats.total_properties }}</div>
+                <div class="kpi-label">Total Properties</div>
+                <div class="kpi-sub">{{ stats.available_properties }} available right now</div>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background: #ecfdf5; color: #059669;">🔑</div>
+            <div>
+                <div class="kpi-num">{{ stats.available_properties }}</div>
+                <div class="kpi-label">Available Listings</div>
+                <div class="kpi-sub">Ready for tenant occupancy</div>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background: #fffbeb; color: #d97706;">📬</div>
+            <div>
+                <div class="kpi-num">{{ stats.new_enquiries }}</div>
+                <div class="kpi-label">New Enquiries</div>
+                <div class="kpi-sub">{{ stats.total_enquiries }} total inquiries received</div>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background: #f5f3ff; color: #7c3aed;">👥</div>
+            <div>
+                <div class="kpi-num">{{ stats.total_customers }}</div>
+                <div class="kpi-label">Registered Tenants</div>
+                <div class="kpi-sub">Verified customer accounts</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Navigation Tabs & Real-time Search Controller -->
+    <div class="admin-controls-card">
+        <div class="tab-pills">
+            <button type="button" class="tab-btn active" onclick="switchAdminTab('propertiesTab', this)">
+                <span>🏠 Properties</span>
+                <span class="tab-badge">{{ properties|length }}</span>
+            </button>
+            <button type="button" class="tab-btn" onclick="switchAdminTab('enquiriesTab', this)">
+                <span>📬 Enquiries</span>
+                <span class="tab-badge">{{ enquiries|length }}</span>
+            </button>
+            <button type="button" class="tab-btn" onclick="switchAdminTab('customersTab', this)">
+                <span>👥 Registered Tenants</span>
+                <span class="tab-badge">{{ customers|length }}</span>
+            </button>
+        </div>
+
+        <div class="search-input-box">
+            <input type="text" id="adminFilterInput" placeholder="Filter by title, tenant, city, or status..." onkeyup="filterAdminTables()">
+        </div>
+    </div>
+
+    <!-- 4. Tab 1: Rental Listings Management -->
+    <div id="propertiesTab" class="admin-section">
+        <div class="section-headline">
+            <div>
+                <h2>🏠 Rental Listings Portfolio ({{ properties|length }})</h2>
+                <p style="color: #64748b; font-size: 0.88rem; margin-top: 0.2rem;">
+                    Full control over rental pricing, occupancy status, public visibility, and home specifications.
+                </p>
+            </div>
+            <a href="{{ url_for('add_property') }}" class="btn btn-sm btn-primary">+ Add New Property</a>
+        </div>
+
+        {% if properties %}
+            <div style="overflow-x: auto;">
+                <table class="admin-table" id="propertiesTable">
+                    <thead>
+                        <tr>
+                            <th>Property Overview</th>
+                            <th>Rental Pricing</th>
+                            <th>Configuration</th>
+                            <th>Live Status</th>
+                            <th>Visibility</th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for prop in properties %}
+                            <tr class="searchable-row" data-search="{{ prop.title }} {{ prop.locality }} {{ prop.city }} {{ prop.property_type }}">
+                                <td>
+                                    <div class="prop-info-cell">
+                                        {% if prop.property_images and prop.property_images|length > 0 %}
+                                            <img src="{{ prop.property_images[0].image_url }}" alt="{{ prop.title }}" class="prop-thumb" onerror="this.src='https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=150&q=80'">
+                                        {% else %}
+                                            <div class="prop-thumb" style="background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">🏠</div>
+                                        {% endif %}
+                                        <div>
+                                            <a href="{{ url_for('property_details', property_id=prop.id) }}" target="_blank" style="font-weight: 700; color: #0f172a; text-decoration: none; font-size: 0.95rem;">
+                                                {{ prop.title }}
+                                            </a>
+                                            <div style="color: #64748b; font-size: 0.82rem; margin-top: 0.2rem;">
+                                                📍 {{ prop.locality }}, {{ prop.city }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="font-weight: 800; font-size: 1.05rem; color: #1e40af;">
+                                        ₹{{ "{:,.0f}".format(prop.monthly_rent) }} <span style="font-size: 0.78rem; color: #64748b; font-weight: normal;">/ month</span>
+                                    </div>
+                                    <div style="color: #64748b; font-size: 0.8rem; margin-top: 0.15rem;">
+                                        Deposit: ₹{{ "{:,.0f}".format(prop.security_deposit or 0) }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="font-weight: 600; color: #1e293b; font-size: 0.88rem;">
+                                        {{ prop.bedrooms }} BHK &bull; {{ prop.property_type }}
+                                    </div>
+                                    <div style="color: #64748b; font-size: 0.8rem; margin-top: 0.15rem;">
+                                        {{ prop.area_sqft }} sqft &bull; {{ prop.furnishing_status }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <form action="{{ url_for('toggle_availability', property_id=prop.id) }}" method="POST" style="margin: 0;">
+                                        <button type="submit" class="status-pill {% if prop.is_available %}status-available{% else %}status-occupied{% endif %}" style="border: none; cursor: pointer;" title="Click to toggle availability">
+                                            {% if prop.is_available %}
+                                                ● Available
+                                            {% else %}
+                                                ● Occupied
+                                            {% endif %}
+                                        </button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form action="{{ url_for('toggle_publish', property_id=prop.id) }}" method="POST" style="margin: 0;">
+                                        <button type="submit" class="status-pill {% if prop.is_published %}status-published{% else %}status-draft{% endif %}" style="border: none; cursor: pointer;" title="Click to toggle public visibility">
+                                            {% if prop.is_published %}
+                                                ✓ Published
+                                            {% else %}
+                                                ○ Hidden Draft
+                                            {% endif %}
+                                        </button>
+                                    </form>
+                                </td>
+                                <td style="text-align: right;">
+                                    <div style="display: inline-flex; gap: 0.4rem;">
+                                        <a href="{{ url_for('edit_property', property_id=prop.id) }}" class="btn-action-icon btn-action-edit" title="Edit Listing Details">
+                                            ✏️ Edit
+                                        </a>
+                                        <form action="{{ url_for('delete_property', property_id=prop.id) }}" method="POST" style="margin: 0;" onsubmit="return confirm('Permanently delete {{ prop.title|escape }}? This will also remove associated photos and cannot be reversed.');">
+                                            <button type="submit" class="btn-action-icon btn-action-delete" title="Delete Property">
+                                                🗑️ Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 3.5rem 1rem; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">
+                <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🏠</div>
+                <h3 style="font-weight: 700; color: #1e293b;">No Rental Properties Found</h3>
+                <p style="color: #64748b; margin-top: 0.35rem; font-size: 0.92rem;">
+                    You haven't listed any houses yet. Click below to add your first verified rental house.
+                </p>
+                <a href="{{ url_for('add_property') }}" class="btn btn-primary" style="margin-top: 1rem;">+ Add Your First Property</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- 5. Tab 2: Customer Enquiries Management -->
+    <div id="enquiriesTab" class="admin-section" style="display: none;">
+        <div class="section-headline">
+            <div>
+                <h2>📬 Tenant Rental Enquiries ({{ enquiries|length }})</h2>
+                <p style="color: #64748b; font-size: 0.88rem; margin-top: 0.2rem;">
+                    Follow up with interested tenants, coordinate property visits, and track resolution status.
+                </p>
+            </div>
+        </div>
+
+        {% if enquiries %}
+            <div style="overflow-x: auto;">
+                <table class="admin-table" id="enquiriesTable">
+                    <thead>
+                        <tr>
+                            <th>Tenant Name & Contact</th>
+                            <th>Enquired Property</th>
+                            <th>Customer Message</th>
+                            <th>Status</th>
+                            <th>Quick Action / Update</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enq in enquiries %}
+                            <tr class="searchable-row" data-search="{{ enq.name }} {{ enq.email }} {{ enq.phone }} {{ enq.status }} {{ enq.properties.title if enq.properties else '' }}">
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div class="avatar-circle">
+                                            {{ enq.name[:1]|upper if enq.name else 'T' }}
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: 700; color: #0f172a; font-size: 0.95rem;">
+                                                {{ enq.name }}
+                                            </div>
+                                            <div style="display: flex; gap: 0.6rem; margin-top: 0.2rem; font-size: 0.82rem;">
+                                                <a href="mailto:{{ enq.email }}" style="color: #2563eb; text-decoration: none;" title="Send Email">✉️ {{ enq.email }}</a>
+                                                {% if enq.phone %}
+                                                    <a href="tel:{{ enq.phone }}" style="color: #059669; text-decoration: none; font-weight: 600;" title="Call Tenant">📞 {{ enq.phone }}</a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="font-weight: 700; color: #1e293b;">
+                                        {{ enq.properties.title if enq.properties else 'Rental Property' }}
+                                    </div>
+                                    <div style="color: #64748b; font-size: 0.8rem; margin-top: 0.15rem;">
+                                        📍 {{ enq.properties.locality if enq.properties else '' }}, {{ enq.properties.city if enq.properties else '' }}
+                                    </div>
+                                </td>
+                                <td style="max-width: 280px;">
+                                    <div style="background: #f8fafc; border-left: 3px solid #3b82f6; padding: 0.5rem 0.75rem; border-radius: 4px; font-size: 0.85rem; color: #334155;">
+                                        "{{ enq.message }}"
+                                    </div>
+                                    <div style="color: #94a3b8; font-size: 0.75rem; margin-top: 0.3rem;">
+                                        🕒 {{ enq.created_at[:10] if enq.created_at else 'Recent' }}
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if enq.status == 'New' %}
+                                        <span class="status-pill status-new">● NEW</span>
+                                    {% elif enq.status == 'Contacted' %}
+                                        <span class="status-pill status-contacted">● CONTACTED</span>
+                                    {% else %}
+                                        <span class="status-pill status-resolved">✓ RESOLVED</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <form action="{{ url_for('update_enquiry_status', enquiry_id=enq.id) }}" method="POST" style="display: flex; gap: 0.4rem; align-items: center; margin: 0;">
+                                        <select name="status" class="form-control" style="padding: 0.35rem 0.6rem; font-size: 0.82rem; width: 120px; border-radius: 8px;">
+                                            <option value="New" {% if enq.status == 'New' %}selected{% endif %}>New</option>
+                                            <option value="Contacted" {% if enq.status == 'Contacted' %}selected{% endif %}>Contacted</option>
+                                            <option value="Resolved" {% if enq.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-outline" style="border-radius: 8px; font-weight: 600;">Save</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 3rem 1rem; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">
+                <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">📬</div>
+                <h3 style="font-weight: 700; color: #1e293b;">No Inquiries Yet</h3>
+                <p style="color: #64748b; margin-top: 0.35rem; font-size: 0.92rem;">
+                    When prospective tenants submit visit requests or questions on your listings, they will show up here.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- 6. Tab 3: Registered Tenants Directory -->
+    <div id="customersTab" class="admin-section" style="display: none;">
+        <div class="section-headline">
+            <div>
+                <h2>👥 Registered Tenants Directory ({{ customers|length }})</h2>
+                <p style="color: #64748b; font-size: 0.88rem; margin-top: 0.2rem;">
+                    Verified tenant user accounts stored securely in the Supabase PostgreSQL database.
+                </p>
+            </div>
+        </div>
+
+        {% if customers %}
+            <div style="overflow-x: auto;">
+                <table class="admin-table" id="customersTable">
+                    <thead>
+                        <tr>
+                            <th>Tenant Name</th>
+                            <th>Email Address</th>
+                            <th>Phone Number</th>
+                            <th>Role Status</th>
+                            <th>Joined Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cust in customers %}
+                            <tr class="searchable-row" data-search="{{ cust.name }} {{ cust.email }} {{ cust.phone or '' }}">
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div class="avatar-circle" style="background: linear-gradient(135deg, #10b981, #047857);">
+                                            {{ cust.name[:1]|upper if cust.name else 'U' }}
+                                        </div>
+                                        <strong style="color: #0f172a; font-size: 0.95rem;">{{ cust.name }}</strong>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="mailto:{{ cust.email }}" style="color: #2563eb; text-decoration: none; font-weight: 500;">
+                                        📧 {{ cust.email }}
+                                    </a>
+                                </td>
+                                <td>
+                                    {% if cust.phone %}
+                                        <a href="tel:{{ cust.phone }}" style="color: #059669; text-decoration: none; font-weight: 600;">
+                                            📞 {{ cust.phone }}
+                                        </a>
+                                    {% else %}
+                                        <span style="color: #94a3b8; font-style: italic;">Not provided</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="brand-badge" style="background: #e0f2fe; color: #0369a1; font-weight: 700;">CUSTOMER</span>
+                                </td>
+                                <td style="color: #64748b; font-size: 0.85rem;">
+                                    📅 {{ cust.created_at[:10] if cust.created_at else 'Recent' }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 3rem 1rem; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">
+                <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">👥</div>
+                <h3 style="font-weight: 700; color: #1e293b;">No Tenants Registered Yet</h3>
+                <p style="color: #64748b; margin-top: 0.35rem; font-size: 0.92rem;">
+                    When new tenants register through the Tenant Registration portal, their profiles will appear here.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Tab switcher logic
+    function switchAdminTab(tabId, btnElement) {
+        // Hide all tabs
+        document.getElementById('propertiesTab').style.display = 'none';
+        document.getElementById('enquiriesTab').style.display = 'none';
+        document.getElementById('customersTab').style.display = 'none';
+
+        // Show selected tab
+        const target = document.getElementById(tabId);
+        if (target) {
+            target.style.display = 'block';
+        }
+
+        // Update active class on tab buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        if (btnElement) {
+            btnElement.classList.add('active');
+        }
+    }
+
+    // Instant real-time filter across all visible rows
+    function filterAdminTables() {
+        const query = document.getElementById('adminFilterInput').value.toLowerCase().trim();
+        const rows = document.querySelectorAll('.searchable-row');
+        
+        rows.forEach(row => {
+            const data = (row.getAttribute('data-search') || '').toLowerCase();
+            if (!query || data.includes(query)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+</script>
+{% endblock %}

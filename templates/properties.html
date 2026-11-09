@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div style="margin-bottom: 2rem;">
+        <h1 style="font-size: 2rem; font-weight: 800; color: var(--dark);">Rental Property Directory</h1>
+        <p style="color: var(--text-muted);">Explore verified rental homes with granular search and filter options.</p>
+    </div>
+
+    <!-- Filter Card -->
+    <div style="background: var(--white); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 2.5rem; box-shadow: var(--shadow-sm);">
+        <form action="{{ url_for('properties') }}" method="GET" class="search-form">
+            <div class="form-group">
+                <label>City</label>
+                <input type="text" name="city" value="{{ filters.city or '' }}" class="form-control" placeholder="Search city...">
+            </div>
+            <div class="form-group">
+                <label>Locality</label>
+                <input type="text" name="locality" value="{{ filters.locality or '' }}" class="form-control" placeholder="Locality or area...">
+            </div>
+            <div class="form-group">
+                <label>Property Type</label>
+                <select name="property_type" class="form-control">
+                    <option value="">All Types</option>
+                    <option value="Apartment" {% if filters.property_type == 'Apartment' %}selected{% endif %}>Apartment</option>
+                    <option value="Villa" {% if filters.property_type == 'Villa' %}selected{% endif %}>Villa</option>
+                    <option value="Independent House" {% if filters.property_type == 'Independent House' %}selected{% endif %}>Independent House</option>
+                    <option value="Studio" {% if filters.property_type == 'Studio' %}selected{% endif %}>Studio</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Bedrooms</label>
+                <select name="bedrooms" class="form-control">
+                    <option value="">Any BHK</option>
+                    <option value="1" {% if filters.bedrooms == 1 %}selected{% endif %}>1 BHK</option>
+                    <option value="2" {% if filters.bedrooms == 2 %}selected{% endif %}>2 BHK</option>
+                    <option value="3" {% if filters.bedrooms == 3 %}selected{% endif %}>3 BHK</option>
+                    <option value="4" {% if filters.bedrooms == 4 %}selected{% endif %}>4+ BHK</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Min Rent (₹)</label>
+                <input type="number" name="min_rent" value="{{ filters.min_rent or '' }}" class="form-control" placeholder="Min ₹">
+            </div>
+            <div class="form-group">
+                <label>Max Rent (₹)</label>
+                <input type="number" name="max_rent" value="{{ filters.max_rent or '' }}" class="form-control" placeholder="Max ₹">
+            </div>
+            <div class="form-group" style="display: flex; gap: 0.5rem;">
+                <button type="submit" class="btn btn-primary" style="flex: 1; height: 42px;">Filter</button>
+                <a href="{{ url_for('properties') }}" class="btn btn-outline" style="height: 42px;">Reset</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Properties List -->
+    {% if properties %}
+        <div class="property-grid">
+            {% for prop in properties %}
+                <div class="property-card">
+                    <div class="property-img-wrapper">
+                        {% if prop.property_images and prop.property_images|length > 0 %}
+                            <img src="{{ prop.property_images[0].image_url }}" alt="{{ prop.title }}" onerror="this.src='https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80'">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80" alt="{{ prop.title }}">
+                        {% endif %}
+                        <span class="badge-tag">{{ prop.property_type }}</span>
+                        {% if prop.is_available %}
+                            <span class="badge-status badge-available">● Available</span>
+                        {% else %}
+                            <span class="badge-status badge-occupied">● Rented</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="property-body">
+                        <div class="property-price">
+                            ₹{{ "{:,.0f}".format(prop.monthly_rent) }} <span>/ month</span>
+                        </div>
+                        <h3 class="property-title">{{ prop.title }}</h3>
+                        <div class="property-location">
+                            📍 {{ prop.locality }}, {{ prop.city }}
+                        </div>
+
+                        <div class="property-specs">
+                            <div class="spec-item">
+                                <strong>{{ prop.bedrooms }} BHK</strong>
+                                <span>Bedrooms</span>
+                            </div>
+                            <div class="spec-item">
+                                <strong>{{ prop.bathrooms }}</strong>
+                                <span>Baths</span>
+                            </div>
+                            <div class="spec-item">
+                                <strong>{{ prop.area_sqft }}</strong>
+                                <span>Sq Ft</span>
+                            </div>
+                        </div>
+
+                        <div class="property-footer">
+                            <a href="{{ url_for('property_details', property_id=prop.id) }}" class="btn btn-primary" style="width: 100%;">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 4rem 1rem; background: var(--white); border-radius: 12px; border: 1px solid var(--border);">
+            <h3>No Properties Matched Your Filter Criteria</h3>
+            <p style="color: var(--text-muted); margin: 0.5rem 0 1.5rem;">Try relaxing your budget, bedrooms, or location search.</p>
+            <a href="{{ url_for('properties') }}" class="btn btn-outline">Clear All Filters</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

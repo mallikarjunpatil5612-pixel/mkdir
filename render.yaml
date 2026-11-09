@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: homerental-pro
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    healthCheckPath: /healthz
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: SECRET_KEY
+        generateValue: true
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: SUPABASE_BUCKET
+        value: property-images
+      - key: ADMIN_DEFAULT_EMAIL
+        value: admin123@gmail.com
+      - key: ADMIN_DEFAULT_PASSWORD
+        value: "123456"
+      - key: ADMIN_DEFAULT_NAME
+        value: Administrator
+      - key: ADMIN_DEFAULT_PHONE
+        value: "+91 9876543210"
+

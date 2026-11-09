@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HomeRental — Premium Rental Houses{% endblock %}</title>
+    <!-- Modern Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Leaflet Map CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Site CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- Responsive Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="brand-logo">
+                🏠 HomeRental
+                <span class="brand-badge">PRO</span>
+            </a>
+
+            <ul class="nav-links">
+                {% if is_logged_in %}
+                    {% if user_role == 'ADMIN' %}
+                        <li><a href="{{ url_for('admin_dashboard') }}" class="btn btn-sm btn-outline">Admin Dashboard</a></li>
+                        <li><a href="{{ url_for('add_property') }}" class="btn btn-sm btn-primary">+ Add Property</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('customer_dashboard') }}" class="btn btn-sm btn-outline">My Dashboard</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('logout') }}" class="btn btn-sm btn-danger">Logout</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Flash Notifications -->
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <span>{{ message }}</span>
+                        <button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;font-weight:bold;">&times;</button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div style="font-weight: 700; color: #fff; font-size: 1.2rem;">🏠 HomeRental Platform</div>
+            <p style="max-width: 600px;">Direct, professional rental house management for verified tenants and administrators. Transparent listings, real-time availability, and instant enquiries.</p>
+            <div class="footer-bottom">
+                &copy; 2025 HomeRental Platform. Two-Role Architecture: Admin & Customer Only. Built with Flask & Supabase.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
+

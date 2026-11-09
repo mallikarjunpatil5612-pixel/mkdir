@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1>Discover Your Ideal Rental Home</h1>
+        <p>Curated apartments, villas, and independent houses managed directly with zero broker hassle.</p>
+    </div>
+</section>
+
+<!-- Direct Search Bar -->
+<div class="search-card">
+    <form action="{{ url_for('properties') }}" method="GET" class="search-form">
+        <div class="form-group">
+            <label>City</label>
+            <input type="text" name="city" class="form-control" placeholder="e.g. Bengaluru, Mumbai">
+        </div>
+        <div class="form-group">
+            <label>Locality</label>
+            <input type="text" name="locality" class="form-control" placeholder="e.g. Bellandur, Indiranagar">
+        </div>
+        <div class="form-group">
+            <label>Property Type</label>
+            <select name="property_type" class="form-control">
+                <option value="">All Types</option>
+                <option value="Apartment">Apartment</option>
+                <option value="Villa">Villa</option>
+                <option value="Independent House">Independent House</option>
+                <option value="Studio">Studio</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Bedrooms</label>
+            <select name="bedrooms" class="form-control">
+                <option value="">Any BHK</option>
+                <option value="1">1 BHK</option>
+                <option value="2">2 BHK</option>
+                <option value="3">3 BHK</option>
+                <option value="4">4+ BHK</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Max Rent (₹)</label>
+            <input type="number" name="max_rent" class="form-control" placeholder="e.g. 50000">
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary" style="height: 42px;">🔍 Search Houses</button>
+        </div>
+    </form>
+</div>
+
+<div class="container">
+    <div class="section-header">
+        <div>
+            <h2>Featured Available Properties</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Hand-picked properties verified and available for immediate move-in.</p>
+        </div>
+        <a href="{{ url_for('properties') }}" class="btn btn-outline">Explore All Properties &rarr;</a>
+    </div>
+
+    {% if properties %}
+        <div class="property-grid">
+            {% for prop in properties %}
+                <div class="property-card">
+                    <div class="property-img-wrapper">
+                        {% if prop.property_images and prop.property_images|length > 0 %}
+                            <img src="{{ prop.property_images[0].image_url }}" alt="{{ prop.title }}" onerror="this.src='https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80'">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80" alt="{{ prop.title }}">
+                        {% endif %}
+                        <span class="badge-tag">{{ prop.property_type }}</span>
+                        {% if prop.is_available %}
+                            <span class="badge-status badge-available">● Available</span>
+                        {% else %}
+                            <span class="badge-status badge-occupied">● Rented</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="property-body">
+                        <div class="property-price">
+                            ₹{{ "{:,.0f}".format(prop.monthly_rent) }} <span>/ month</span>
+                        </div>
+                        <h3 class="property-title">{{ prop.title }}</h3>
+                        <div class="property-location">
+                            📍 {{ prop.locality }}, {{ prop.city }}
+                        </div>
+
+                        <div class="property-specs">
+                            <div class="spec-item">
+                                <strong>{{ prop.bedrooms }} BHK</strong>
+                                <span>Bedrooms</span>
+                            </div>
+                            <div class="spec-item">
+                                <strong>{{ prop.bathrooms }}</strong>
+                                <span>Baths</span>
+                            </div>
+                            <div class="spec-item">
+                                <strong>{{ prop.area_sqft }}</strong>
+                                <span>Sq Ft</span>
+                            </div>
+                        </div>
+
+                        <div class="property-footer">
+                            <a href="{{ url_for('property_details', property_id=prop.id) }}" class="btn btn-primary" style="width: 100%;">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 4rem 1rem; background: var(--white); border-radius: 12px; border: 1px solid var(--border);">
+            <h3>No Properties Available Right Now</h3>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">Check back later or Admin can add new properties from the dashboard.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

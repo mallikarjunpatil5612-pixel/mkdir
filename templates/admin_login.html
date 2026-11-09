@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Administrator Sign In — HomeRental PRO{% endblock %}
+
+{% block extra_head %}
+<style>
+    .admin-auth-card {
+        background: #ffffff;
+        border-radius: 20px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.12);
+        padding: 2.6rem 2.4rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .admin-auth-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #dc2626, #2563eb, #38bdf8);
+    }
+    .shield-badge {
+        width: 58px;
+        height: 58px;
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        color: #ffffff;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        margin: 0 auto 1.2rem;
+        box-shadow: 0 8px 18px -4px rgba(15, 23, 42, 0.35);
+    }
+    .auth-input-group label {
+        display: block;
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: #334155;
+        margin-bottom: 0.45rem;
+        letter-spacing: 0.2px;
+    }
+    .auth-input-group input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        border: 1px solid #cbd5e1;
+        font-size: 0.95rem;
+        outline: none;
+        transition: all 0.2s;
+        background: #f8fafc;
+    }
+    .auth-input-group input:focus {
+        background: #ffffff;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+    .auth-submit-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 1rem;
+        padding: 0.85rem 1.5rem;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 6px 16px -2px rgba(30, 64, 175, 0.35);
+        transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .auth-submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px -3px rgba(30, 64, 175, 0.45);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 480px; margin-top: 3.5rem; margin-bottom: 5rem;">
+    <div class="admin-auth-card">
+        
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div class="shield-badge">🛡️</div>
+            <span style="background: #fee2e2; color: #b91c1c; font-size: 0.74rem; font-weight: 800; padding: 0.28rem 0.75rem; border-radius: 999px; letter-spacing: 0.6px; text-transform: uppercase;">
+                RESTRICTED ACCESS ONLY
+            </span>
+            <h2 style="font-size: 1.75rem; font-weight: 800; color: #0f172a; margin-top: 0.65rem; letter-spacing: -0.4px;">
+                Administrator Sign In
+            </h2>
+            <p style="color: #64748b; font-size: 0.88rem; margin-top: 0.35rem;">
+                Authorized portal for managing properties, verifying tenants, and system operations.
+            </p>
+        </div>
+
+        <form method="POST">
+            <div class="auth-input-group" style="margin-bottom: 1.2rem;">
+                <label for="adminEmail">Admin Email</label>
+                <input type="email" id="adminEmail" name="email" placeholder="admin123@gmail.com" required autofocus>
+            </div>
+
+            <div class="auth-input-group" style="margin-bottom: 1.8rem;">
+                <label for="adminPassword">Security Password</label>
+                <input type="password" id="adminPassword" name="password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="auth-submit-btn">
+                Authenticate & Enter Console &rarr;
+            </button>
+        </form>
+
+        <div style="margin-top: 1.8rem; text-align: center; font-size: 0.84rem; border-top: 1px solid #f1f5f9; padding-top: 1.2rem; color: #64748b; line-height: 1.5;">
+            🔒 Sole Administrator Portal &bull; Access restricted to designated admin email.<br>
+            <span style="color: #94a3b8; font-size: 0.78rem;">Supabase Row Security & SHA-256 Hashing Enforced</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
