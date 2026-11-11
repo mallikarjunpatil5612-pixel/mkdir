@@ -683,19 +683,40 @@ def admin_login():
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
 
-        # Enforce designated sole admin email restriction
-        if email != Config.ADMIN_DEFAULT_EMAIL.lower():
+        # Enforce administrator authorization check
+        allowed_admin_emails = [Config.ADMIN_DEFAULT_EMAIL.lower()]
+        extra_admins = [e.strip().lower() for e in os.getenv("ADMIN_ALLOWED_EMAILS", "").split(",") if e.strip()]
+        allowed_admin_emails.extend(extra_admins)
+
+        is_authorized = email in allowed_admin_emails
+        admin_user = None
+
+        if supabase_client:
+            try:
+                res = supabase_client.table('users').select('*').eq('email', email).limit(1).execute()
+                if res.data:
+                    u = res.data[0]
+                    if u.get('role') == 'ADMIN':
+                        is_authorized = True
+                        admin_user = u
+                    elif not is_authorized:
+                        flash("This account is registered as a Tenant. Please use the Tenant Login portal.", "warning")
+                        return redirect(url_for('login'))
+            except Exception as e:
+                print(f"Supabase admin login query error: {e}")
+
+        if not is_authorized:
             flash("Unauthorized. Access restricted to the designated administrator account only.", "danger")
             return render_template('admin_login.html')
 
-        admin_user = None
-        if supabase_client:
-            try:
-                res = supabase_client.table('users').select('*').eq('email', email).eq('role', 'ADMIN').limit(1).execute()
-                if res.data:
-                    admin_user = res.data[0]
-            except Exception as e:
-                print(f"Supabase admin login query error: {e}")
+        if not admin_user:
+            if supabase_client:
+                try:
+                    res = supabase_client.table('users').select('*').eq('email', email).eq('role', 'ADMIN').limit(1).execute()
+                    if res.data:
+                        admin_user = res.data[0]
+                except Exception as e:
+                    print(f"Supabase admin login query error: {e}")
 
         if not admin_user:
             for u in mock_db['users']:

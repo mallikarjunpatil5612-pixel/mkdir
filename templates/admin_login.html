@@ -75,14 +75,23 @@
         transform: translateY(-2px);
         box-shadow: 0 10px 22px -3px rgba(30, 64, 175, 0.45);
     }
+    .credentials-hint-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.9rem 1.1rem;
+        margin-bottom: 1.4rem;
+        font-size: 0.84rem;
+        color: #475569;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container" style="max-width: 480px; margin-top: 3.5rem; margin-bottom: 5rem;">
+<div class="container" style="max-width: 480px; margin-top: 3rem; margin-bottom: 5rem;">
     <div class="admin-auth-card">
         
-        <div style="text-align: center; margin-bottom: 2rem;">
+        <div style="text-align: center; margin-bottom: 1.5rem;">
             <div class="shield-badge">🛡️</div>
             <span style="background: #fee2e2; color: #b91c1c; font-size: 0.74rem; font-weight: 800; padding: 0.28rem 0.75rem; border-radius: 999px; letter-spacing: 0.6px; text-transform: uppercase;">
                 RESTRICTED ACCESS ONLY
@@ -95,10 +104,22 @@
             </p>
         </div>
 
+        <!-- 1-Click Credential Helper -->
+        <div class="credentials-hint-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                <strong style="color: #0f172a;">Designated Admin Account:</strong>
+                <button type="button" onclick="fillAdminCreds()" class="btn btn-sm btn-outline" style="font-size: 0.75rem; padding: 0.25rem 0.55rem; border-radius: 6px;">
+                    ⚡ Auto-Fill
+                </button>
+            </div>
+            <div>📧 Email: <code style="color: #1e40af; font-weight: 600;">admin123@gmail.com</code></div>
+            <div>🔑 Pass: <code style="color: #1e40af; font-weight: 600;">123456</code></div>
+        </div>
+
         <form method="POST">
             <div class="auth-input-group" style="margin-bottom: 1.2rem;">
                 <label for="adminEmail">Admin Email</label>
-                <input type="email" id="adminEmail" name="email" placeholder="admin123@gmail.com" required autofocus>
+                <input type="email" id="adminEmail" name="email" value="admin123@gmail.com" placeholder="admin123@gmail.com" required autofocus>
             </div>
 
             <div class="auth-input-group" style="margin-bottom: 1.8rem;">
@@ -111,10 +132,23 @@
             </button>
         </form>
 
-        <div style="margin-top: 1.8rem; text-align: center; font-size: 0.84rem; border-top: 1px solid #f1f5f9; padding-top: 1.2rem; color: #64748b; line-height: 1.5;">
+        <div style="margin-top: 1.4rem; text-align: center; font-size: 0.88rem; color: #475569; padding-top: 1rem; border-top: 1px solid #f1f5f9;">
+            Are you a tenant? <a href="{{ url_for('login') }}" style="color: #2563eb; font-weight: 700; text-decoration: none;">Sign in to Tenant Portal &rarr;</a>
+        </div>
+
+        <div style="margin-top: 1rem; text-align: center; font-size: 0.8rem; color: #94a3b8; line-height: 1.4;">
             🔒 Sole Administrator Portal &bull; Access restricted to designated admin email.<br>
-            <span style="color: #94a3b8; font-size: 0.78rem;">Supabase Row Security & SHA-256 Hashing Enforced</span>
+            <span>Supabase Row Security & SHA-256 Hashing Enforced</span>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function fillAdminCreds() {
+        document.getElementById('adminEmail').value = 'admin123@gmail.com';
+        document.getElementById('adminPassword').value = '123456';
+    }
+</script>
 {% endblock %}
