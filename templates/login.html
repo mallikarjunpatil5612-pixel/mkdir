@@ -1,31 +1,128 @@
 {% extends "base.html" %}
 
+{% block title %}Tenant Sign In — HomeRental PRO{% endblock %}
+
+{% block extra_head %}
+<style>
+    .tenant-auth-card {
+        background: #ffffff;
+        border-radius: 20px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 20px 40px -15px rgba(30, 64, 175, 0.12);
+        padding: 2.6rem 2.4rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .tenant-auth-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #1e40af, #0284c7, #10b981);
+    }
+    .tenant-icon-badge {
+        width: 58px;
+        height: 58px;
+        background: linear-gradient(135deg, #1e40af, #0284c7);
+        color: #ffffff;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        margin: 0 auto 1.2rem;
+        box-shadow: 0 8px 18px -4px rgba(30, 64, 175, 0.35);
+    }
+    .auth-input-group label {
+        display: block;
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: #334155;
+        margin-bottom: 0.45rem;
+        letter-spacing: 0.2px;
+    }
+    .auth-input-group input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        border: 1px solid #cbd5e1;
+        font-size: 0.95rem;
+        outline: none;
+        transition: all 0.2s;
+        background: #f8fafc;
+    }
+    .auth-input-group input:focus {
+        background: #ffffff;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+    .auth-submit-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #1e40af, #2563eb);
+        color: #ffffff !important;
+        font-weight: 700;
+        font-size: 1rem;
+        padding: 0.85rem 1.5rem;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 6px 16px -2px rgba(30, 64, 175, 0.35);
+        transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .auth-submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px -3px rgba(30, 64, 175, 0.45);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container" style="max-width: 480px; margin-top: 3rem; margin-bottom: 4rem;">
-    <div style="background: var(--white); padding: 2.2rem; border-radius: 14px; border: 1px solid var(--border); box-shadow: var(--shadow-md);">
+<div class="container" style="max-width: 480px; margin-top: 3.5rem; margin-bottom: 5rem;">
+    <div class="tenant-auth-card">
         
-        <div style="text-align: center; margin-bottom: 1.5rem;">
-            <span class="brand-badge">RENTAL TENANT PORTAL</span>
-            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--dark); margin-top: 0.5rem;">Rental Log In</h2>
-            <p style="color: var(--text-muted); font-size: 0.88rem;">Sign in to browse houses, save favourites and submit enquiries</p>
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div class="tenant-icon-badge">🏠</div>
+            <span style="background: #eff6ff; color: #1e40af; font-size: 0.76rem; font-weight: 800; padding: 0.28rem 0.75rem; border-radius: 999px; letter-spacing: 0.5px; text-transform: uppercase;">
+                RENTAL TENANT PORTAL
+            </span>
+            <h2 style="font-size: 1.75rem; font-weight: 800; color: #0f172a; margin-top: 0.65rem; letter-spacing: -0.4px;">
+                Tenant Sign In
+            </h2>
+            <p style="color: #64748b; font-size: 0.88rem; margin-top: 0.35rem;">
+                Sign in to view available houses, track your inquiries, and manage your rental profile.
+            </p>
         </div>
 
         <form method="POST">
-            <div class="form-group" style="margin-bottom: 1rem;">
-                <label>Email Address</label>
-                <input type="email" name="email" class="form-control" placeholder="name@example.com" required>
+            <div class="auth-input-group" style="margin-bottom: 1.2rem;">
+                <label for="tenantEmail">Email Address</label>
+                <input type="email" id="tenantEmail" name="email" placeholder="name@example.com" required autofocus>
             </div>
 
-            <div class="form-group" style="margin-bottom: 1.5rem;">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
+            <div class="auth-input-group" style="margin-bottom: 1.8rem;">
+                <label for="tenantPassword">Password</label>
+                <input type="password" id="tenantPassword" name="password" placeholder="Enter your password" required>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+            <button type="submit" class="auth-submit-btn">
+                Sign In to Tenant Portal &rarr;
+            </button>
         </form>
 
-        <div style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; border-top: 1px solid var(--border); padding-top: 1rem; color: var(--text-muted);">
-            Don't have a rental account? <a href="{{ url_for('register') }}" style="color: var(--primary); font-weight: 600;">Register as Tenant</a>
+        <div style="margin-top: 1.6rem; text-align: center; font-size: 0.9rem; border-top: 1px solid #f1f5f9; padding-top: 1.2rem; color: #64748b;">
+            Don't have a tenant account? 
+            <a href="{{ url_for('register') }}" style="color: #2563eb; font-weight: 700; text-decoration: none;">
+                Register here &rarr;
+            </a>
+        </div>
+
+        <div style="margin-top: 0.75rem; text-align: center; font-size: 0.82rem; color: #94a3b8;">
+            Are you an administrator? 
+            <a href="{{ url_for('admin_login') }}" style="color: #64748b; font-weight: 600;">
+                Admin Portal &rarr;
+            </a>
         </div>
     </div>
 </div>
