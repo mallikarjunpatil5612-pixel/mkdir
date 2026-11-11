@@ -446,10 +446,15 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if 'user_id' in session:
-        if session.get('role') == 'ADMIN':
-            return redirect(url_for('admin_dashboard'))
-        return redirect(url_for('customer_dashboard'))
+    # If already logged in as CUSTOMER, redirect to dashboard unless requesting account switch
+    if request.method == 'GET' and 'user_id' in session:
+        if request.args.get('switch') == '1':
+            session.clear()
+        elif session.get('role') == 'CUSTOMER':
+            return redirect(url_for('customer_dashboard'))
+        elif session.get('role') == 'ADMIN':
+            # Inform admin user that they can switch to tenant account here
+            flash("You are currently signed in as Administrator. Sign in below as a Tenant to switch accounts.", "info")
 
     if request.method == 'POST':
         email = request.form.get('email', '').strip().lower()
@@ -466,7 +471,7 @@ def login():
 
         if not user:
             for u in mock_db['users']:
-                if u['email'] == email:
+                if u.get('email', '').lower() == email:
                     user = u
                     break
 
@@ -476,6 +481,7 @@ def login():
                 flash("Admin accounts should use the Admin Login portal.", "info")
                 return redirect(url_for('admin_login'))
 
+            session.clear()  # Clear any previous session (e.g. admin session)
             session['user_id'] = user['id']
             session['user_name'] = user['name']
             session['email'] = user['email']

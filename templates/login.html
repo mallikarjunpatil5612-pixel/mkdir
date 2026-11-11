@@ -75,6 +75,15 @@
         transform: translateY(-2px);
         box-shadow: 0 10px 22px -3px rgba(30, 64, 175, 0.45);
     }
+    .credentials-hint-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.9rem 1.1rem;
+        margin-bottom: 1.4rem;
+        font-size: 0.84rem;
+        color: #475569;
+    }
 </style>
 {% endblock %}
 
@@ -82,7 +91,7 @@
 <div class="container" style="max-width: 480px; margin-top: 3.5rem; margin-bottom: 5rem;">
     <div class="tenant-auth-card">
         
-        <div style="text-align: center; margin-bottom: 2rem;">
+        <div style="text-align: center; margin-bottom: 1.5rem;">
             <div class="tenant-icon-badge">🏠</div>
             <span style="background: #eff6ff; color: #1e40af; font-size: 0.76rem; font-weight: 800; padding: 0.28rem 0.75rem; border-radius: 999px; letter-spacing: 0.5px; text-transform: uppercase;">
                 RENTAL TENANT PORTAL
@@ -95,6 +104,24 @@
             </p>
         </div>
 
+        {% if is_logged_in and user_role == 'ADMIN' %}
+            <div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 1.25rem; font-size: 0.88rem; color: #92400e;">
+                ⚠️ You are currently signed in as Administrator. Sign in below with a Tenant account to switch, or <a href="{{ url_for('admin_dashboard') }}" style="font-weight: 700; color: #b45309;">return to Admin Console &rarr;</a>
+            </div>
+        {% endif %}
+
+        <!-- 1-Click Credential Helper for Tenant -->
+        <div class="credentials-hint-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                <strong style="color: #0f172a;">Sample Tenant Account:</strong>
+                <button type="button" onclick="fillTenantCreds()" class="btn btn-sm btn-outline" style="font-size: 0.75rem; padding: 0.25rem 0.55rem; border-radius: 6px;">
+                    ⚡ Auto-Fill
+                </button>
+            </div>
+            <div>📧 Email: <code style="color: #1e40af; font-weight: 600;">kavya561@gmail.com</code></div>
+            <div>🔑 Pass: <code style="color: #1e40af; font-weight: 600;">123456</code></div>
+        </div>
+
         <form method="POST">
             <div class="auth-input-group" style="margin-bottom: 1.2rem;">
                 <label for="tenantEmail">Email Address</label>
@@ -103,7 +130,7 @@
 
             <div class="auth-input-group" style="margin-bottom: 1.8rem;">
                 <label for="tenantPassword">Password</label>
-                <input type="password" id="tenantPassword" name="password" placeholder="Enter your password" required>
+                <input type="password" id="tenantPassword" name="password" placeholder="••••••••" required>
             </div>
 
             <button type="submit" class="auth-submit-btn">
@@ -126,4 +153,13 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function fillTenantCreds() {
+        document.getElementById('tenantEmail').value = 'kavya561@gmail.com';
+        document.getElementById('tenantPassword').value = '123456';
+    }
+</script>
 {% endblock %}
