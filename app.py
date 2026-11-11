@@ -731,6 +731,7 @@ def admin_login():
                     break
 
         if admin_user and check_password_hash(admin_user['password_hash'], password):
+            session.clear()
             session['user_id'] = admin_user['id']
             session['user_name'] = admin_user['name']
             session['email'] = admin_user['email']
