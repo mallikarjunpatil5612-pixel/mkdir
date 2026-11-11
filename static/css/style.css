@@ -82,7 +82,7 @@ body {
   list-style: none;
 }
 
-.nav-links a {
+.nav-links a:not(.btn) {
   text-decoration: none;
   color: var(--text-main);
   font-weight: 500;
@@ -90,12 +90,50 @@ body {
   transition: color 0.2s;
 }
 
-.nav-links a:hover {
+.nav-links a:not(.btn):hover {
   color: var(--primary);
 }
 
 .nav-links .btn {
   font-size: 0.9rem;
+}
+
+/* Explicit navbar button color enforcement */
+.nav-links .btn-primary,
+.nav-links a.btn-primary {
+  color: #ffffff !important;
+  background-color: var(--primary) !important;
+}
+
+.nav-links .btn-primary:hover,
+.nav-links a.btn-primary:hover {
+  color: #ffffff !important;
+  background-color: var(--primary-hover) !important;
+}
+
+.nav-links .btn-danger,
+.nav-links a.btn-danger {
+  color: #ffffff !important;
+  background-color: var(--danger) !important;
+}
+
+.nav-links .btn-danger:hover,
+.nav-links a.btn-danger:hover {
+  color: #ffffff !important;
+  background-color: #dc2626 !important;
+}
+
+.nav-links .btn-outline,
+.nav-links a.btn-outline {
+  color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  background-color: transparent !important;
+}
+
+.nav-links .btn-outline:hover,
+.nav-links a.btn-outline:hover {
+  color: var(--primary) !important;
+  background-color: var(--primary-light) !important;
 }
 
 /* BUTTONS */
@@ -115,11 +153,12 @@ body {
 
 .btn-primary {
   background-color: var(--primary);
-  color: var(--white);
+  color: #ffffff !important;
 }
 
 .btn-primary:hover {
   background-color: var(--primary-hover);
+  color: #ffffff !important;
   box-shadow: var(--shadow-md);
 }
 
@@ -135,11 +174,12 @@ body {
 
 .btn-danger {
   background-color: var(--danger);
-  color: var(--white);
+  color: #ffffff !important;
 }
 
 .btn-danger:hover {
   background-color: #dc2626;
+  color: #ffffff !important;
 }
 
 .btn-success {

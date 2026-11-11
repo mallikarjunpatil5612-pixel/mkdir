@@ -28,11 +28,11 @@
                 {% if is_logged_in %}
                     {% if user_role == 'ADMIN' %}
                         <li><a href="{{ url_for('admin_dashboard') }}" class="btn btn-sm btn-outline">Admin Dashboard</a></li>
-                        <li><a href="{{ url_for('add_property') }}" class="btn btn-sm btn-primary">+ Add Property</a></li>
+                        <li><a href="{{ url_for('add_property') }}" class="btn btn-sm btn-primary" style="color: #ffffff !important;">+ Add Property</a></li>
                     {% else %}
                         <li><a href="{{ url_for('customer_dashboard') }}" class="btn btn-sm btn-outline">My Dashboard</a></li>
                     {% endif %}
-                    <li><a href="{{ url_for('logout') }}" class="btn btn-sm btn-danger">Logout</a></li>
+                    <li><a href="{{ url_for('logout') }}" class="btn btn-sm btn-danger" style="color: #ffffff !important;">Logout</a></li>
                 {% endif %}
             </ul>
         </div>
